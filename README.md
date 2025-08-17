@@ -53,7 +53,7 @@ demo_string = "Goodbye World!"
 ---
 ---
 
->![INFO]
+> [!NOTE]
 > As of versions:
 >
 > * IPython          : 8.11.0
@@ -119,7 +119,7 @@ Cell In[1], line 1
 NameError: name 'demo_string' is not defined
 ```
 
-> ![IMPORTANT]
+> [!IMPORTANT]
 > Make sure to restart the kernel between executions.
 >
 > If you don't restart the kernel, `demo_string` may still be defined internally and provide different results.
