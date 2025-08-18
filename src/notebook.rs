@@ -3,6 +3,7 @@
 use std::io::Write;
 use std::path::PathBuf;
 use std::fs::{create_dir, File};
+use std::process::exit;
 
 use serde::{Serialize, Deserialize};
 use toml;
@@ -23,9 +24,15 @@ impl Notebook {
             name: match &notebook_dir.file_name() {
                 Some(val) => match val.to_str() {
                     Some(val) => val.to_string(),
-                    None => panic!("Project directory {} is not valid unicode", &notebook_dir.as_os_str().to_str().unwrap())
+                    None => { 
+                        eprintln!("Project directory {} is not valid unicode", &notebook_dir.as_os_str().to_str().unwrap());
+                        exit(-1);
+                    }
                 },
-                None => panic!("Project directory {} cannot be used to identify a project name", &notebook_dir.as_os_str().to_str().unwrap())
+                None => { 
+                    eprintln!("Project directory {} cannot be used to identify a project name", &notebook_dir.as_os_str().to_str().unwrap());
+                    exit(-1);
+                }
             },
             directory: notebook_dir
         };
@@ -34,25 +41,35 @@ impl Notebook {
         if !notebook.directory.exists() {
             match create_dir(&notebook.directory) {
                 Ok(_) => {},
-                Err(err) => panic!("Failed to create the notebook directory with error {err}")
+                Err(err) => { 
+                    eprintln!("Failed to create the notebook directory with error {err}");
+                    exit(-1)
+                }
             };
         };
 
         let serialized_notebook = match toml::to_string_pretty(&notebook) {
             Ok(val) => val,
             Err(err) => {
-                panic!("Failed to convert notebook string with error {err}");
+                eprintln!("Failed to convert notebook string with error {err}");
+                exit(-1);
             }
         };
 
         let notebook_filepath = notebook.directory.join("main.iscnb");
         let mut notebook_file = match File::create(notebook_filepath) {
             Ok(val) => val,
-            Err(err) => panic!("Failed to create notebook file with error {err}")
+            Err(err) => {
+                eprintln!("Failed to create notebook file with error {err}");
+                exit(-1);
+            }
         };
         match notebook_file.write_all(serialized_notebook.as_bytes()) {
             Ok(_) => {},
-            Err(err) => panic!("Failed to write notebook data to file with error {err}")
+            Err(err) => {
+                eprintln!("Failed to write notebook data to file with error {err}");
+                exit(-1);
+            }
         };
 
         notebook
