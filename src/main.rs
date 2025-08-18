@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 
 pub mod notebook;
 pub mod page;
+pub mod cell;
 
 use notebook::Notebook;
 use page::Page;

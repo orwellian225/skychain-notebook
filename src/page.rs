@@ -8,15 +8,22 @@ use std::process::exit;
 use serde::{Serialize, Deserialize};
 use toml;
 
+use crate::cell::{Cell, CellType};
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Page {
-    identifier: String
+    identifier: String,
+    cells: Vec<Cell>
 }
 
 impl Page {
     pub fn create_page(directory: PathBuf, page_name: String) -> Page {
+        let title_cell = CellType::MarkdownCell(format!("## {}", &page_name));
         let page = Page {
-            identifier: page_name
+            identifier: page_name,
+            cells: vec![
+                Cell::create_cell(0, title_cell),
+            ]
         };
 
         println!("Creating new page with identifier {}", &page.identifier);
