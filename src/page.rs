@@ -9,13 +9,17 @@ use serde::{Serialize, Deserialize};
 use toml;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Page {}
+pub struct Page {
+    identifier: String
+}
 
 impl Page {
     pub fn create_page(directory: PathBuf, page_name: String) -> Page {
-        let page = Page {};
+        let page = Page {
+            identifier: page_name
+        };
 
-        println!("Creating new page");
+        println!("Creating new page with identifier {}", &page.identifier);
         let serialized_page = match toml::to_string_pretty(&page) {
             Ok(val) => val,
             Err(err) => {
@@ -24,7 +28,7 @@ impl Page {
             }
         };
 
-        let page_filepath = directory.join(format!("{page_name}.iscpg"));
+        let page_filepath = directory.join(format!("{}.iscpg", &page.identifier));
         let mut page_file = match File::create(page_filepath) {
             Ok(val) => val,
             Err(err) => { 

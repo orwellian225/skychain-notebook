@@ -10,8 +10,7 @@ use toml;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Notebook {
-    name: String,
-    directory: PathBuf
+    identifier: String
 }
 
 impl Notebook {
@@ -21,7 +20,7 @@ impl Notebook {
             None => current_directory.clone()
         };
         let notebook = Notebook {
-            name: match &notebook_dir.file_name() {
+            identifier: match &notebook_dir.file_name() {
                 Some(val) => match val.to_str() {
                     Some(val) => val.to_string(),
                     None => { 
@@ -34,12 +33,11 @@ impl Notebook {
                     exit(-1);
                 }
             },
-            directory: notebook_dir
         };
 
-        println!("Creating notebook \"{}\" in {}", &notebook.name, &notebook.directory.to_str().unwrap());
-        if !notebook.directory.exists() {
-            match create_dir(&notebook.directory) {
+        println!("Creating notebook \"{}\" in {}", &notebook.identifier, &notebook_dir.to_str().unwrap());
+        if !notebook_dir.exists() {
+            match create_dir(&notebook_dir) {
                 Ok(_) => {},
                 Err(err) => { 
                     eprintln!("Failed to create the notebook directory with error {err}");
@@ -56,7 +54,7 @@ impl Notebook {
             }
         };
 
-        let notebook_filepath = notebook.directory.join("main.iscnb");
+        let notebook_filepath = notebook_dir.join("main.iscnb");
         let mut notebook_file = match File::create(notebook_filepath) {
             Ok(val) => val,
             Err(err) => {
