@@ -21,6 +21,17 @@ cargo run
 
 ### Roadmap
 
+1. Notebook Data Model
+    1. [ ] Cell
+    2. [ ] Page
+    3. [ ] Book
+    4. [ ] Slide
+2. Notebook Kernels
+    1. [ ] SkyChain Kernel
+    2. [ ] Python Kernel
+    3. [ ] Bash Kernel
+3. Notebook Viewer
+
 ## Information
 
 ### Motivation
