@@ -18,11 +18,11 @@ pub struct Page {
 
 impl Page {
     pub fn create_page(directory: PathBuf, page_name: String) -> Page {
-        let title_cell = CellType::MarkdownCell(format!("## {}", &page_name));
+        let title_cell_content = format!("## {}", &page_name);
         let page = Page {
             identifier: page_name,
             cells: vec![
-                Cell::create_cell(0, title_cell),
+                Cell::create_cell(0, CellType::MarkdownCell, title_cell_content),
             ]
         };
 

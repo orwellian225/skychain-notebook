@@ -37,13 +37,13 @@ impl Notebook {
             }
         };
 
-        let title_cell = CellType::MarkdownCell(format!("# {}", &project_title));
-        let info_cell = CellType::MarkdownCell(format!("This is a Skychain Notebook!\n\nWe use algorithms and some clever thinking to improve the notebook experience, but the sky is lower then jupiter, so please lower your expectations."));
+        let title_cell_content = format!("# {}", &project_title);
+        let first_cell_content = format!("This is a Skychain Notebook!\n\nWe use algorithms and some clever thinking to improve the notebook experience, but the sky is lower then jupiter, so please lower your expectations.");
         let notebook = Notebook {
             identifier: project_title,
             cells: vec![
-                Cell::create_cell(0, title_cell),
-                Cell::create_cell(1, info_cell)
+                Cell::create_cell(0, CellType::MarkdownCell, title_cell_content),
+                Cell::create_cell(1, CellType::MarkdownCell, first_cell_content)
             ]
         };
 
