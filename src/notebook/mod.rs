@@ -8,7 +8,10 @@ use std::process::exit;
 use serde::{Serialize, Deserialize};
 use toml;
 
-use crate::cell::{Cell, CellType};
+pub mod cell;
+pub mod page;
+
+use cell::{Cell, CellType};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Notebook {
