@@ -8,7 +8,8 @@ use std::process::exit;
 use serde::{Serialize, Deserialize};
 use toml;
 
-use super::cell::{Cell, CellType};
+use super::cell::Cell;
+use super::cell_types::CellType;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Page {

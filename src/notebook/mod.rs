@@ -10,8 +10,10 @@ use toml;
 
 pub mod cell;
 pub mod page;
+pub mod cell_types;
 
-use cell::{Cell, CellType};
+use cell::Cell;
+use cell_types::CellType;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Notebook {

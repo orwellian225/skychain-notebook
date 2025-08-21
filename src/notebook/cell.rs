@@ -1,10 +1,7 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug)]
-pub enum CellType {
-    MarkdownCell,
-    KernelCell { kernel_identifier: String }
-}
+use super::cell_types::CellType;
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cell {
