@@ -121,7 +121,7 @@ impl Notebook {
             }
         };
 
-        let notebook_filepath = notebook.dir.join(&notebook.identifier).join(".iscnb");
+        let notebook_filepath = notebook.dir.join(format!("{}.iscnb", &notebook.identifier));
         let mut notebook_file = match File::create(notebook_filepath) {
             Ok(val) => val,
             Err(err) => {
