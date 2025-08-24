@@ -19,8 +19,35 @@ The goal is to make a _book_ rather then a single page of content.
     * A page of code and writing
 4. Cell
     * A single statically typed cell of data
-    * Types of cells:
-      * Input - Control and modify input variables for the remainder of the execution chain
-      * Code - A block of code that is passed into and executed by a kernel as a single chunk
-      * Output - The resultant output of code block
-      * Markdown - Text content in the markdown format
+
+## Kernels
+
+## Themes
+
+## Config
+
+## Cache
+
+## Notebook Directory Structure
+
+```txt
+notebook_dir
+├── .kernel
+│   ├── <<bash kernel>>
+│   └── <<python kernel>>
+├── .themes
+│   ├── <<default theme>>
+│   └── <<user theme>>
+├── .config
+│   └── <<local config>>
+├── .cache
+│   └── <<>>
+├── main.iscnb
+├── page_one.iscpg
+├── chapter_one
+│   ├── page_one.iscpg
+│   └── page_two.iscpg
+└── chapter_two
+    ├── page_one.iscpg
+    └── page_two.iscpg
+```
