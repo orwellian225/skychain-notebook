@@ -62,11 +62,11 @@ impl Notebook {
     pub fn chapters(&self) -> &Vec<PathBuf> { &self.chapters }
     pub fn pages(&self) -> &Vec<Page> { &self.pages }
 
-    pub fn title_mut(&mut self) -> &String { &self.title }
-    pub fn authors_mut(&mut self) -> &Vec<Author> { &self.authors }
-    pub fn cells_mut(&mut self) -> &Vec<Box<dyn Cell>> { &self.cells }
-    pub fn chapters_mut(&mut self) -> &Vec<PathBuf> { &self.chapters }
-    pub fn pages_mut(&mut self) -> &Vec<Page> { &self.pages }
+    pub fn title_mut(&mut self) -> &mut String { &mut self.title }
+    pub fn authors_mut(&mut self) -> &mut Vec<Author> { &mut self.authors }
+    pub fn cells_mut(&mut self) -> &mut Vec<Box<dyn Cell>> { &mut self.cells }
+    pub fn chapters_mut(&mut self) -> &mut Vec<PathBuf> { &mut self.chapters }
+    pub fn pages_mut(&mut self) -> &mut Vec<Page> { &mut self.pages }
 }
 
 impl Notebook {
