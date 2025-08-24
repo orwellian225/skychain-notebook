@@ -1,8 +1,9 @@
 //! skychain notebook
 
+use std::fmt::Debug;
 use std::io::Write;
 use std::path::PathBuf;
-use std::fs::{create_dir, File};
+use std::fs::{read, create_dir, read_dir, File};
 use std::process::exit;
 
 use serde::{Serialize, Deserialize};
@@ -12,6 +13,7 @@ pub mod chapter;
 pub mod page;
 pub mod cell;
 
+use chapter::Chapter;
 use page::Page;
 use cell::Cell;
 use cell::types::MarkdownCell;
@@ -34,7 +36,7 @@ pub struct Notebook {
     authors: Vec<Author>,
     cells: Vec<Box<dyn Cell>>,
 
-    chapters: Vec<PathBuf>,
+    chapters: Vec<Chapter>,
     pages: Vec<Page>
 }
 
@@ -59,13 +61,13 @@ impl Notebook {
     pub fn title(&self) -> &String { &self.title }
     pub fn authors(&self) -> &Vec<Author> { &self.authors }
     pub fn cells(&self) -> &Vec<Box<dyn Cell>> { &self.cells }
-    pub fn chapters(&self) -> &Vec<PathBuf> { &self.chapters }
+    pub fn chapters(&self) -> &Vec<Chapter> { &self.chapters }
     pub fn pages(&self) -> &Vec<Page> { &self.pages }
 
     pub fn title_mut(&mut self) -> &mut String { &mut self.title }
     pub fn authors_mut(&mut self) -> &mut Vec<Author> { &mut self.authors }
     pub fn cells_mut(&mut self) -> &mut Vec<Box<dyn Cell>> { &mut self.cells }
-    pub fn chapters_mut(&mut self) -> &mut Vec<PathBuf> { &mut self.chapters }
+    pub fn chapters_mut(&mut self) -> &mut Vec<Chapter> { &mut self.chapters }
     pub fn pages_mut(&mut self) -> &mut Vec<Page> { &mut self.pages }
 }
 
@@ -133,5 +135,40 @@ impl Notebook {
         };
 
         notebook
+    }
+
+    pub fn load_notebook(current_directory: &PathBuf) -> Notebook {
+        let notebook_filepaths: Vec<PathBuf> = read_dir(current_directory).unwrap()
+            .filter(|dir_res| dir_res.is_ok() )
+            .filter(|dir_res| dir_res.as_ref().unwrap().path().extension().is_some())
+            .filter(|dir_res| dir_res.as_ref().unwrap().path().extension().unwrap() == "iscnb")
+            .map(|dir_res| dir_res.unwrap().path())
+            .collect();
+
+        if notebook_filepaths.len() == 0 {
+            eprintln!("No notebook found in {}", current_directory.display());
+            exit(-1);
+        }
+
+        if notebook_filepaths.len() > 1 {
+            eprintln!("Multiple notebooks found in {}.\nPlease convert the other notebooks into a page or move into their own directory.", current_directory.display());
+            exit(-1);
+        }
+
+        let notebook_data = match read(&notebook_filepaths[0]) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Failed to read notebook {} with error: {}", notebook_filepaths[0].display(), err);
+                exit(-1);
+            }
+        };
+
+        match toml::from_slice(&notebook_data) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Failed to deserialize notebook {} with error: {}", notebook_filepaths[0].display(), err);
+                exit(-1);
+            }
+        }
     }
 }

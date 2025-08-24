@@ -27,7 +27,6 @@ enum Commands {
         #[command(subcommand)]
         subcommand: NewCommand
     }
-        
 }
 
 #[derive(Subcommand)]
@@ -50,12 +49,17 @@ fn main() {
         Commands::Init { name } => { 
             let _notebook = Notebook::init_notebook(current_dir, name.to_owned());
         }
-        Commands::New { subcommand } => match subcommand {
-            NewCommand::Page{ name } => { 
-                let _new_page = Page::create_page(current_dir, name.to_owned());
-            },
-            NewCommand::Chapter { title } => {
-                let _new_chapter = Chapter::create_chapter(current_dir, title.to_owned());
+        Commands::New { subcommand } => { 
+            let mut notebook = Notebook::load_notebook(&current_dir);
+            match subcommand {
+                NewCommand::Page{ name } => { 
+                    let new_page = Page::create_page(current_dir, name.to_owned());
+                    notebook.pages_mut().push(new_page);
+                },
+                NewCommand::Chapter { title } => {
+                    let new_chapter = Chapter::create_chapter(current_dir, title.to_owned());
+                    notebook.chapters_mut().push(new_chapter);
+                }
             }
         }
     };
