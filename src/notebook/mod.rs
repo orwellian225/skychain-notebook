@@ -30,7 +30,9 @@ pub struct Author {
 pub struct Notebook {
     /// Identifier is the (unique across the notebook directory) identifier of the notebook
     identifier: String,
+
     /// Path that the notebook is loaded from / saved to
+    #[serde(skip)]
     dir: PathBuf,
 
     /// The non-unique title of the notebook
@@ -161,17 +163,19 @@ impl Notebook {
         let notebook_data = match read(&notebook_filepaths[0]) {
             Ok(val) => val,
             Err(err) => {
-                eprintln!("Failed to read notebook {} with error: {}", notebook_filepaths[0].display(), err);
+                eprintln!("Failed to read notebook {} with error: {}", &notebook_filepaths[0].display(), err);
                 exit(-1);
             }
         };
 
-        match toml::from_slice(&notebook_data) {
+        let mut notebook: Notebook = match toml::from_slice(&notebook_data) {
             Ok(val) => val,
             Err(err) => {
-                eprintln!("Failed to deserialize notebook {} with error: {}", notebook_filepaths[0].display(), err);
+                eprintln!("Failed to deserialize notebook {} with error: {}", &notebook_filepaths[0].display(), err);
                 exit(-1);
             }
-        }
+        };
+        notebook.dir = notebook_filepaths.iter().nth(0).unwrap().to_path_buf();
+        notebook
     }
 }
