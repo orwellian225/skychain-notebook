@@ -30,6 +30,8 @@ pub struct Author {
 pub struct Notebook {
     /// Identifier is the (unique across the notebook directory) identifier of the notebook
     identifier: String,
+    /// Path that the notebook is loaded from / saved to
+    dir: PathBuf,
 
     /// The non-unique title of the notebook
     title: String,
@@ -46,6 +48,7 @@ impl Default for Notebook {
 
         Notebook { 
             identifier: "new_notebook".to_string(),
+            dir: PathBuf::new(),
             title: "New Notebook".to_string(), 
             authors: vec![ Author { name: "New Author".to_string(), ..Default::default() } ],
             cells: vec![
@@ -72,7 +75,7 @@ impl Notebook {
 }
 
 impl Notebook {
-    pub fn init_notebook(current_directory: PathBuf, project_name: Option<String>) -> Notebook {
+    pub fn init_notebook(current_directory: &PathBuf, project_name: Option<String>) -> Notebook {
         let notebook_dir= match project_name {
             Some(val) => current_directory.join(val),
             None => current_directory.clone()
@@ -94,14 +97,14 @@ impl Notebook {
 
         let project_title = project_identifier.replace("_", " ");
         let notebook = Notebook { 
-            identifier: project_identifier, 
+            identifier: "main".to_string(), 
+            dir: notebook_dir,
             title: project_title,
             ..Default::default()
         };
 
-        println!("Creating notebook \"{}\" in {}", &notebook.identifier, &notebook_dir.to_str().unwrap());
-        if !notebook_dir.exists() {
-            match create_dir(&notebook_dir) {
+        if !notebook.dir.exists() {
+            match create_dir(&notebook.dir) {
                 Ok(_) => {},
                 Err(err) => {
                     eprintln!("Failed to create the notebook directory with error: {err}");
@@ -118,7 +121,7 @@ impl Notebook {
             }
         };
 
-        let notebook_filepath = notebook_dir.join("main.iscnb");
+        let notebook_filepath = notebook.dir.join(&notebook.identifier).join(".iscnb");
         let mut notebook_file = match File::create(notebook_filepath) {
             Ok(val) => val,
             Err(err) => {

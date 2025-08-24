@@ -47,7 +47,7 @@ fn main() {
 
     match &cli.command {
         Commands::Init { name } => { 
-            let _notebook = Notebook::init_notebook(current_dir, name.to_owned());
+            let _notebook = Notebook::init_notebook(&current_dir, name.to_owned());
         }
         Commands::New { subcommand } => { 
             let mut notebook = Notebook::load_notebook(&current_dir);
