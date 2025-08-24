@@ -5,19 +5,67 @@ use std::path::PathBuf;
 use std::fs::{create_dir, File};
 use std::process::exit;
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 use toml;
 
 pub mod cell;
 pub mod page;
 
+use page::Page;
 use cell::Cell;
 use cell::types::MarkdownCell;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Author {
+    pub name: String,
+    pub organization: Option<String>,
+    pub email: Option<String>,
+    pub website: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Notebook {
+    /// Identifier is the (unique across the notebook directory) identifier of the notebook
     identifier: String,
-    cells: Vec<Box<dyn Cell>>
+
+    /// The non-unique title of the notebook
+    title: String,
+    authors: Vec<Author>,
+    cells: Vec<Box<dyn Cell>>,
+
+    chapters: Vec<PathBuf>,
+    pages: Vec<Page>
+}
+
+impl Default for Notebook {
+    fn default() -> Self {
+        let first_cell_content = format!("This is a Skychain Notebook!\n\nWe use algorithms and some clever thinking to improve the notebook experience, but the sky is lower then jupiter, so please lower your expectations.");
+
+        Notebook { 
+            identifier: "new_notebook".to_string(),
+            title: "New Notebook".to_string(), 
+            authors: vec![ Author { name: "New Author".to_string(), ..Default::default() } ],
+            cells: vec![
+	            Box::new(MarkdownCell::create_cell(first_cell_content))
+            ], 
+            chapters: Vec::new(), 
+            pages: Vec::new()
+        }
+    }
+}
+
+impl Notebook {
+    pub fn title(&self) -> &String { &self.title }
+    pub fn authors(&self) -> &Vec<Author> { &self.authors }
+    pub fn cells(&self) -> &Vec<Box<dyn Cell>> { &self.cells }
+    pub fn chapters(&self) -> &Vec<PathBuf> { &self.chapters }
+    pub fn pages(&self) -> &Vec<Page> { &self.pages }
+
+    pub fn title_mut(&mut self) -> &String { &self.title }
+    pub fn authors_mut(&mut self) -> &Vec<Author> { &self.authors }
+    pub fn cells_mut(&mut self) -> &Vec<Box<dyn Cell>> { &self.cells }
+    pub fn chapters_mut(&mut self) -> &Vec<PathBuf> { &self.chapters }
+    pub fn pages_mut(&mut self) -> &Vec<Page> { &self.pages }
 }
 
 impl Notebook {
@@ -27,7 +75,7 @@ impl Notebook {
             None => current_directory.clone()
         };
 
-        let project_title = match &notebook_dir.file_name() {
+        let project_identifier= match &notebook_dir.file_name() {
             Some(val) => match val.to_str() {
                 Some(val) => val.to_string(),
                 None => {
@@ -41,14 +89,11 @@ impl Notebook {
             }
         };
 
-        let title_cell_content = format!("# {}", &project_title);
-        let first_cell_content = format!("This is a Skychain Notebook!\n\nWe use algorithms and some clever thinking to improve the notebook experience, but the sky is lower then jupiter, so please lower your expectations.");
-        let notebook = Notebook {
-            identifier: project_title,
-            cells: vec![
-	            Box::new(MarkdownCell::create_cell(title_cell_content)),
-	            Box::new(MarkdownCell::create_cell(first_cell_content))
-            ]
+        let project_title = project_identifier.replace("_", " ");
+        let notebook = Notebook { 
+            identifier: project_identifier, 
+            title: project_title,
+            ..Default::default()
         };
 
         println!("Creating notebook \"{}\" in {}", &notebook.identifier, &notebook_dir.to_str().unwrap());
