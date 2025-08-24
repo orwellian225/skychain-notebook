@@ -5,12 +5,12 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::process::exit;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use toml;
 
 use super::cell::{Cell, types::MarkdownCell};
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Page {
     identifier: String,
     cells: Vec<Box<dyn Cell>>
