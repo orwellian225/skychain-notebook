@@ -68,6 +68,7 @@ fn main() {
                         notebook.chapters_mut().push(new_chapter);
                     }
                 }
+                notebook.save_notebook();
             }
         }
     };

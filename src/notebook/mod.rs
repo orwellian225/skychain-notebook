@@ -2,7 +2,7 @@
 
 use std::fmt::Debug;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::fs::{read, create_dir, read_dir, File};
 use std::process::exit;
 
@@ -115,30 +115,7 @@ impl Notebook {
             };
         };
 
-        let serialized_notebook = match toml::to_string_pretty(&notebook) {
-            Ok(val) => val,
-            Err(err) => {
-                eprintln!("Failed to convert notebook string with error: {err}");
-                exit(-1);
-            }
-        };
-
-        let notebook_filepath = notebook.dir.join(format!("{}.iscnb", &notebook.identifier));
-        let mut notebook_file = match File::create(notebook_filepath) {
-            Ok(val) => val,
-            Err(err) => {
-                eprintln!("Failed to create notebook file with error: {err}");
-                exit(-1);
-            }
-        };
-        match notebook_file.write_all(serialized_notebook.as_bytes()) {
-            Ok(_) => {},
-            Err(err) => {
-                eprintln!("Failed to write notebook data to file with error: {err}");
-                exit(-1);
-            }
-        };
-
+        notebook.save_notebook();
         notebook
     }
 
@@ -175,7 +152,36 @@ impl Notebook {
                 exit(-1);
             }
         };
-        notebook.dir = notebook_filepaths.iter().nth(0).unwrap().to_path_buf();
+
+        // Appending the directory of the filepath, not the filepath to the iscnb file itself
+        notebook.dir = notebook_filepaths[0].to_path_buf().parent().unwrap_or(Path::new("/")).to_path_buf();
         notebook
+    }
+
+    pub fn save_notebook(&self) {
+        let notebook_path = self.dir.join(format!("{}.iscnb", self.identifier));
+        let mut notebook_file = match File::create(notebook_path){
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Failed to create notebook file with error: {err}");
+                exit(-1);
+            }
+        };
+
+        let serialized_notebook = match toml::to_string_pretty(&self) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Failed to convert notebook string with error: {err}");
+                exit(-1);
+            }
+        };
+
+        match notebook_file.write_all(serialized_notebook.as_bytes()) {
+            Ok(_) => {},
+            Err(err) => {
+                eprintln!("Failed to write notebook data to file with error: {err}");
+                exit(-1);
+            }
+        };
     }
 }
