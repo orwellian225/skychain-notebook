@@ -8,7 +8,7 @@ use std::process::exit;
 use serde::Serialize;
 use toml;
 
-use super::cell::{Cell, MarkdownCell};
+use super::cell::{Cell, types::MarkdownCell};
 
 #[derive(Serialize, Debug)]
 pub struct Page {
