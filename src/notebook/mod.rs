@@ -8,8 +8,9 @@ use std::process::exit;
 use serde::{Serialize, Deserialize};
 use toml;
 
-pub mod cell;
+pub mod chapter;
 pub mod page;
+pub mod cell;
 
 use page::Page;
 use cell::Cell;

@@ -6,6 +6,8 @@ pub mod notebook;
 
 use notebook::{ Notebook, page::Page };
 
+use crate::notebook::chapter::Chapter;
+
 #[derive(Parser)]
 #[command(version, about)]
 struct Cli {
@@ -30,7 +32,8 @@ enum Commands {
 
 #[derive(Subcommand)]
 enum NewCommand {
-    Page { name: String }
+    Page { name: String },
+    Chapter { title: String }
 }
 
 fn main() {
@@ -50,6 +53,9 @@ fn main() {
         Commands::New { subcommand } => match subcommand {
             NewCommand::Page{ name } => { 
                 let _new_page = Page::create_page(current_dir, name.to_owned());
+            },
+            NewCommand::Chapter { title } => {
+                let _new_chapter = Chapter::create_chapter(current_dir, title.to_owned());
             }
         }
     };
