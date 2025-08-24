@@ -1,24 +1,23 @@
-//! skychain notebook 
+//! skychain notebook
 
 use std::io::Write;
 use std::path::PathBuf;
 use std::fs::{create_dir, File};
 use std::process::exit;
 
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 use toml;
 
 pub mod cell;
 pub mod page;
 pub mod cell_types;
 
-use cell::Cell;
-use cell_types::CellType;
+use cell::{Cell, MarkdownCell};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct Notebook {
     identifier: String,
-    cells: Vec<Cell>
+    cells: Vec<Box<dyn Cell>>
 }
 
 impl Notebook {
@@ -31,12 +30,12 @@ impl Notebook {
         let project_title = match &notebook_dir.file_name() {
             Some(val) => match val.to_str() {
                 Some(val) => val.to_string(),
-                None => { 
+                None => {
                     eprintln!("Project directory {} is not valid unicode", &notebook_dir.as_os_str().to_str().unwrap());
                     exit(-1);
                 }
             },
-            None => { 
+            None => {
                 eprintln!("Project directory {} cannot be used to identify a project name", &notebook_dir.as_os_str().to_str().unwrap());
                 exit(-1);
             }
@@ -47,8 +46,8 @@ impl Notebook {
         let notebook = Notebook {
             identifier: project_title,
             cells: vec![
-                Cell::create_cell(0, CellType::MarkdownCell, title_cell_content),
-                Cell::create_cell(1, CellType::MarkdownCell, first_cell_content)
+	            Box::new(MarkdownCell::create_cell(title_cell_content)),
+	            Box::new(MarkdownCell::create_cell(first_cell_content))
             ]
         };
 
@@ -56,8 +55,8 @@ impl Notebook {
         if !notebook_dir.exists() {
             match create_dir(&notebook_dir) {
                 Ok(_) => {},
-                Err(err) => { 
-                    eprintln!("Failed to create the notebook directory with error {err}");
+                Err(err) => {
+                    eprintln!("Failed to create the notebook directory with error: {err}");
                     exit(-1)
                 }
             };
@@ -66,7 +65,7 @@ impl Notebook {
         let serialized_notebook = match toml::to_string_pretty(&notebook) {
             Ok(val) => val,
             Err(err) => {
-                eprintln!("Failed to convert notebook string with error {err}");
+                eprintln!("Failed to convert notebook string with error: {err}");
                 exit(-1);
             }
         };
@@ -75,14 +74,14 @@ impl Notebook {
         let mut notebook_file = match File::create(notebook_filepath) {
             Ok(val) => val,
             Err(err) => {
-                eprintln!("Failed to create notebook file with error {err}");
+                eprintln!("Failed to create notebook file with error: {err}");
                 exit(-1);
             }
         };
         match notebook_file.write_all(serialized_notebook.as_bytes()) {
             Ok(_) => {},
             Err(err) => {
-                eprintln!("Failed to write notebook data to file with error {err}");
+                eprintln!("Failed to write notebook data to file with error: {err}");
                 exit(-1);
             }
         };

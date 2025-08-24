@@ -1,20 +1,19 @@
 //! skychain page
-//! 
+
 use std::io::Write;
 use std::path::PathBuf;
 use std::fs::File;
 use std::process::exit;
 
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 use toml;
 
-use super::cell::Cell;
-use super::cell_types::CellType;
+use super::cell::{Cell, MarkdownCell};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct Page {
     identifier: String,
-    cells: Vec<Cell>
+    cells: Vec<Box<dyn Cell>>
 }
 
 impl Page {
@@ -23,7 +22,7 @@ impl Page {
         let page = Page {
             identifier: page_name,
             cells: vec![
-                Cell::create_cell(0, CellType::MarkdownCell, title_cell_content),
+	           	Box::new(MarkdownCell::create_cell(title_cell_content))
             ]
         };
 
@@ -39,19 +38,19 @@ impl Page {
         let page_filepath = directory.join(format!("{}.iscpg", &page.identifier));
         let mut page_file = match File::create(page_filepath) {
             Ok(val) => val,
-            Err(err) => { 
+            Err(err) => {
                 eprintln!("Failed to create page file with error {err}");
                 exit(-1);
             }
         };
         match page_file.write_all(serialized_page.as_bytes()) {
             Ok(_) =>  {},
-            Err(err) => { 
+            Err(err) => {
                 eprintln!("failed to write page data to file with error {err}");
                 exit(-1);
             }
         }
-        
+
         page
     }
 }
