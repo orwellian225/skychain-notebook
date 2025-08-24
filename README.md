@@ -21,16 +21,54 @@ cargo run
 
 ### Roadmap
 
-1. Notebook Data Model
-    1. [ ] Cell
-    2. [ ] Page
-    3. [ ] Book
-    4. [ ] Slide
-2. Notebook Kernels
-    1. [ ] SkyChain Kernel
-    2. [ ] Python Kernel
-    3. [ ] Bash Kernel
-3. Notebook Viewer
+#### 0.1.x - Notebook structure and data
+
+1. Notebook
+    * [x] Initialize the notebook
+    * [x] Load the notebook from the current directory
+    * [x] Save the notebook into the current directory
+2. Add new components
+    * [ ] Add a new chapter to the notebook
+    * [ ] Add a new page to the notebook if in root directory
+    * [ ] Add a new page to the chapter if in chapter directory
+3. Add plugin-style cells
+    * [ ] Cell API
+    * [ ] Markdown Cell
+    * [ ] (OPTIONAL) HTML Cell
+    * [ ] (OPTIONAL) Txt Cell
+4. Config
+    * Global
+        * [ ] create global config if doesn't exist
+        * [ ] modify global config option
+        * [ ] open global config in default text editor
+    * Local
+        * [ ] create local config from global config if exists
+        * [ ] modify local config option
+5. Command Line Interface
+
+#### 0.2.x - Web Viewer
+
+1. Viewing
+2. Editing
+3. Themes
+    * Default dark
+    * Default light
+    * Theme switcher
+    * Custom themes
+
+#### 0.3.x - Kernels
+
+#### 0.4.x - Dependency & Execution chains
+
+#### 0.5.x - Export
+
+1. Freeze notebook
+2. Export to HTML
+3. Export to PDF?
+
+#### 0.6.x - Jupyter Notebook Conversion
+
+1. Convert a jupyter notebook into a skychain notebook
 
 ## Information
 
