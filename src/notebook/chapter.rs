@@ -11,6 +11,7 @@ use super::page::Page;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Chapter {
     identifier: String,
+    #[serde(skip)]
     directory: PathBuf,
 
     title: String,
@@ -34,10 +35,24 @@ impl Chapter {
         let chapter_identifier= chapter_title
             .replace(" ", "_")
             .to_lowercase();
-
         let chapter_directory = notebook_directory.join(&chapter_identifier);
-        if  !chapter_directory.exists() {
-            match create_dir(&chapter_directory) {
+
+        let chapter = Chapter {
+            identifier: chapter_identifier,
+            directory: chapter_directory,
+            title: chapter_title,
+            pages: Vec::new()
+        };
+
+        chapter
+    }
+
+    /// To save a chapter, the following needs to happen
+    /// 1. The chapter directory needs to exist
+    /// 2. Each page file needs to be saved to the directory
+    pub fn save_chapter(&self) {
+        if  !self.directory.exists() {
+            match create_dir(&self.directory) {
                 Ok(_) => {},
                 Err(err) => {
                     eprintln!("Failed to create the chapter directory with error: {err}");
@@ -49,11 +64,8 @@ impl Chapter {
             exit(-1);
         }
 
-        Chapter {
-            identifier: chapter_identifier,
-            directory: chapter_directory,
-            title: chapter_title,
-            pages: Vec::new()
+        for page in self.pages.iter() {
+            page.save_page(&self.directory);
         }
     }
 }

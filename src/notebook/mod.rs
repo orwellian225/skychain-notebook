@@ -157,8 +157,7 @@ impl Notebook {
         notebook.dir = notebook_filepaths[0].to_path_buf().parent().unwrap_or(Path::new("/")).to_path_buf();
         notebook
     }
-
-    pub fn save_notebook(&self) {
+pub fn save_notebook(&self) {
         let notebook_path = self.dir.join(format!("{}.iscnb", self.identifier));
         let mut notebook_file = match File::create(notebook_path){
             Ok(val) => val,
@@ -183,5 +182,13 @@ impl Notebook {
                 exit(-1);
             }
         };
+
+        for page in self.pages.iter() {
+            page.save_page(&self.dir);
+        }
+
+        for chapter in self.chapters.iter() {
+            chapter.save_chapter();
+        }
     }
 }

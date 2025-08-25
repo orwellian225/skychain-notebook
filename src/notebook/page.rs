@@ -26,16 +26,15 @@ impl Page {
             ]
         };
 
-        println!("Creating new page with identifier {}", &page.identifier);
-        let serialized_page = match toml::to_string_pretty(&page) {
-            Ok(val) => val,
-            Err(err) => {
-                eprintln!("Failed to convert page string with error {err}");
-                exit(-1);
-            }
-        };
+        page.save_page(&directory);
+        page
+    }
 
-        let page_filepath = directory.join(format!("{}.iscpg", &page.identifier));
+    /// Saving a page is the following procedure
+    /// 1. In the specified directory, create a page file using <identifier>.iscpg
+    /// 2. Write the page's content into the file
+    pub fn save_page(&self, save_directory: &PathBuf) {
+        let page_filepath = save_directory.join(format!("{}.iscpg", self.identifier));
         let mut page_file = match File::create(page_filepath) {
             Ok(val) => val,
             Err(err) => {
@@ -43,6 +42,15 @@ impl Page {
                 exit(-1);
             }
         };
+
+        let serialized_page = match toml::to_string_pretty(self) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Failed to convert page string with error {err}");
+                exit(-1);
+            }
+        };
+
         match page_file.write_all(serialized_page.as_bytes()) {
             Ok(_) =>  {},
             Err(err) => {
@@ -50,7 +58,5 @@ impl Page {
                 exit(-1);
             }
         }
-
-        page
     }
 }
