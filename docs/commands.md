@@ -13,4 +13,13 @@
     * `<theme_identifier> = dark` - add the first-party dark mode theme
   * `chapter <chapter_title>`
   * `page <page_title>`
+* `view`
+  * `summary`
+    * `notebook` - View summary information of the notebook
+    * `chapter <IDENTIFIER>` - View summary information of the specified chapter
+    * `page <IDENTIFIER>` - View summary information of the specified page
+  * `notebook` - View a list of chapters & top-level pages of the notebook
+  * `chapter <IDENTIFIER>` - View a list of pages in the chapter
+  * `page <IDENTIFIER>` - View a list of cells in the chapter
+  * `cell <IDENTIFIER>` - View the cell
 * `config`
